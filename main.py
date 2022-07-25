@@ -2,7 +2,21 @@
 # The goal of the game is to have the have the projectile orbit the bodies for as long as possible before it exits the screen.
 
 # import libraries
-import pygame
+import pygame, sys
+from pygame.locals import *
 
-#initialize pygame
-pygame.init()
+#Main function
+def main():
+    pygame.init()
+
+    DISPLAY=pygame.display.set_mode((500,400))
+
+    # Check for events, close screen if quit event
+    while True:
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.display.update()
+
+main()
