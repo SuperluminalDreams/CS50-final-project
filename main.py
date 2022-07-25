@@ -9,14 +9,24 @@ from pygame.locals import *
 def main():
     pygame.init()
 
-    DISPLAY=pygame.display.set_mode((500,400))
-
-    # Check for events, close screen if quit event
+    #initialize display and launching point
+    launch_center = (30, 470)
+    DISPLAY=pygame.display.set_mode((500,500))
+    launch_point = pygame.draw.circle(DISPLAY, (255, 0, 0), launch_center, 5)
+    
+    
+    # Always loop
     while True:
+        mouse_pos = pygame.mouse.get_pos()
+        #use dirty rect method with blits here to move a crosshair to mouse location
+        pygame.display.update()
+
+        # check for events
         for event in pygame.event.get():
+            # quit if quit
             if event.type==QUIT:
                 pygame.quit()
                 sys.exit()
-        pygame.display.update()
+        
 
 main()
