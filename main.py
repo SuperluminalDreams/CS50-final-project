@@ -8,16 +8,16 @@ from pygame.locals import *
 
 #Projectile Class
 
-screen_width = 1000
-screen_height= 1000
+screen_width = 1920
+screen_height= 1080
 class Projectile(pygame.sprite.Sprite):
     def __init__(self):
-        origin = (20, 20)
+        self.origin = (20, 500)
         super().__init__()
         self.image = pygame.Surface([10,10])
         self.image.fill("white")
         self.rect = self.image.get_rect()
-        self.rect.center = origin
+        self.rect.center = self.origin
 
         self.xvel = 0
         self.yvel = 0
@@ -30,10 +30,12 @@ class Projectile(pygame.sprite.Sprite):
         # add "if hits body"
     # Fire sets initial velocity toward crosshair        
     def fire(self):
+        #velocity constant
+        self.vel_const = 0.6
         self.fired = True
         mouse_mag = math.sqrt(pygame.mouse.get_pos()[0]**2 + pygame.mouse.get_pos()[1]**2)
-        self.xvel = 0.5 * pygame.mouse.get_pos()[0] / mouse_mag
-        self.yvel = 0.5 * pygame.mouse.get_pos()[1] / mouse_mag
+        self.xvel = self.vel_const  * (pygame.mouse.get_pos()[0] - self.origin[0]) / mouse_mag
+        self.yvel = self.vel_const * (pygame.mouse.get_pos()[1] - self.origin[1]) / mouse_mag
     
 # Crosshair class
 class Crosshair(pygame.sprite.Sprite):
@@ -52,12 +54,16 @@ class Body(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mass = mass
         self.rect.center = (xpos, ypos)
+        #gravitational constant
+        self.g = 50
     def update(self, projectile, dt):
+        #calculate acceleration due to gravity
         self.xdist = self.rect.center[0] - projectile.rect.center[0]
         self.ydist = self.rect.center[1] - projectile.rect.center[1]
         self.dist = math.sqrt(self.xdist**2 + self.ydist**2)
-        self.ax = 100 * (self.mass * self.xdist) / self.dist**3
-        self.ay = 100 * (self.mass * self.ydist) / self.dist**3
+        #apply gravity to projectile
+        self.ax = self.g * (self.mass * self.xdist) / self.dist**3
+        self.ay = self.g * (self.mass * self.ydist) / self.dist**3
         if projectile.fired:
             projectile.xvel += self.ax * dt
             projectile.yvel += self.ay * dt 
@@ -71,9 +77,11 @@ projectile = Projectile()
 projectile_group = pygame.sprite.Group()
 projectile_group.add(projectile)
 
-planet = Body("crosshair.png", 1, 500, 500)
+planet = Body("crosshair.png", 1, 300, 500)
+planet2 = Body("crosshair.png", 1, 1500, 500)
 body_group = pygame.sprite.Group()
 body_group.add(planet)
+body_group.add(planet2)
 
 #Main function
 def main():
