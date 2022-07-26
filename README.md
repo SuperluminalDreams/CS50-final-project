@@ -8,3 +8,9 @@ or crashing into the bodies.
 
 ### Requirements: 
 - Pygame
+
+### Artwork Credits:
+- Winston Yallow - https://twitter.com/WinstonYallow
+
+### Acknowledgments
+Thank you to [Clear Code](https://www.youtube.com/c/ClearCode) for his Pygame instructional videos.
