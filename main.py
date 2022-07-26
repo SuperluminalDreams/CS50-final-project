@@ -2,31 +2,53 @@
 # The goal of the game is to have the have the projectile orbit the bodies for as long as possible before it exits the screen.
 
 # import libraries
+from audioop import cross
 import pygame, sys
 from pygame.locals import *
 
+#Projectile Class
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+
+# Crosshair class
+class Crosshair(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.transform.scale(pygame.image.load("crosshair.png"), (50,50))
+        self.rect = self.image.get_rect()
+    def update(self):
+        self.rect.center = pygame.mouse.get_pos()
+      
+# Initialize Crosshair
+crosshair = Crosshair()
+crosshair_group = pygame.sprite.Group()
+crosshair_group.add(crosshair)
+
 #Main function
 def main():
+    #Initialize and set cursor invisible
     pygame.init()
+    clock = pygame.time.Clock()
+    pygame.mouse.set_visible(False)
 
-    #initialize display and launching point
-    launch_center = (30, 470)
-    DISPLAY=pygame.display.set_mode((500,500))
-    launch_point = pygame.draw.circle(DISPLAY, (255, 0, 0), launch_center, 5)
-    
-    
-    # Always loop
+    #Initialize Display
+    DISPLAY=pygame.display.set_mode((1000,1000))
+ 
+    # Main Loop
     while True:
-        mouse_pos = pygame.mouse.get_pos()
-        #use dirty rect method with blits here to move a crosshair to mouse location
-        pygame.display.update()
-
         # check for events
         for event in pygame.event.get():
             # quit if quit
             if event.type==QUIT:
                 pygame.quit()
                 sys.exit()
-        
+
+        #Update screen fill and sprite groups
+        DISPLAY.fill("black")
+        crosshair_group.draw(DISPLAY)
+        crosshair_group.update()
+        pygame.display.update()
+        dt = clock.tick(60)
 
 main()
