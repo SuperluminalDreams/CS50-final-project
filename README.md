@@ -11,6 +11,7 @@ or crashing into the bodies.
 
 ### Artwork Credits:
 - Winston Yallow - https://twitter.com/WinstonYallow
+- 9KeyStudio - https://opengameart.org/users/9keystudio
 
 ### Acknowledgments
 Thank you to [Clear Code](https://www.youtube.com/c/ClearCode) for his Pygame instructional videos.
