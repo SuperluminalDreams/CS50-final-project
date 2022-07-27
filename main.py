@@ -77,24 +77,20 @@ class Body(pygame.sprite.Sprite):
             projectile.xvel += self.ax * dt
             projectile.yvel += self.ay * dt 
             
-
-# Initialize Objects
-crosshair = Crosshair()
-crosshair_group = pygame.sprite.Group()
-crosshair_group.add(crosshair)
-
-projectile = Projectile((200, 500))
-projectile_group = pygame.sprite.Group()
-projectile_group.add(projectile)
-
-planet = Body("images/planet_terra.png", 0.5, 850, 500)
-planet2 = Body("images/planet_jungle.png", 0.65, 1200, 600)
-body_group = pygame.sprite.Group()
-body_group.add(planet)
-body_group.add(planet2)
-
 #Main function
-def main():
+def main(group, origin=(20,20)):
+
+    # Initialize Objects
+    crosshair = Crosshair()
+    crosshair_group = pygame.sprite.Group()
+    crosshair_group.add(crosshair)
+
+    projectile = Projectile(origin)
+    projectile_group = pygame.sprite.Group()
+    projectile_group.add(projectile)
+
+    body_group = group
+
     #Initialize and set cursor invisible
     pygame.init()
     clock = pygame.time.Clock()
@@ -119,9 +115,15 @@ def main():
                 sys.exit()
             # fire probe with mouse
             if event.type == MOUSEBUTTONDOWN:
-                if projectile.fired == False:
-                    t0 = time.time()
-                    projectile.fire()
+                if event.button == 1:
+                    if projectile.fired == False:
+                        t0 = time.time()
+                        projectile.fire()
+                if event.button == 4:
+                    projectile.vel_const += 0.05
+                elif event.button == 5:
+                    projectile.vel_const -= 0.05
+
             # press 'r' to reset
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
@@ -145,12 +147,15 @@ def main():
             t1 = time.time()
         score = t1 - t0
 
+
         # Display score and instructions
         score_obj=font_obj.render(f"Flight Time: {round(score, 3)} seconds",True,"white")
         instructions_obj=font_obj.render(f"Click to fire    -   Press \"R\" to reset    -   Press \"Q\" to quit",True,"white")
+        velocity_obj=font_obj.render(f"Launch Velocity: {round(projectile.vel_const, 2)}",True,"white")
 
         DISPLAY.blit(score_obj,(20, 0))
         DISPLAY.blit(instructions_obj, (20, 1000))
+        DISPLAY.blit(velocity_obj, (20, 950))
         
 
         # check collision
@@ -160,4 +165,3 @@ def main():
         # Update Display
         pygame.display.update()
         
-main()
