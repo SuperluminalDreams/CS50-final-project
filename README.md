@@ -5,9 +5,15 @@ On screen will be several bodies that exert gravitational force on the projectil
 to make the projectile orbit the bodies for as long as possible before either exiting the screen 
 or crashing into the bodies. 
 
+### How to Play
+
+CD to the final_project folder and run "python level_#.py" with '#' replaced by the desired level. 
+Change initial velocity with the mouse wheel and aim the probe with the mouse. Have fun!
+
 
 ### Requirements: 
-- Pygame
+- Python https://www.python.org/downloads/release/python-3105/
+- Pygame https://www.geeksforgeeks.org/how-to-install-pygame-in-windows/
 
 ### Artwork Credits:
 - Winston Yallow - https://twitter.com/WinstonYallow
