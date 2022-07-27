@@ -4,28 +4,27 @@
 # import libraries
 from audioop import cross
 from types import NoneType
-import pygame, sys, math
+import pygame, sys, math, time
 from pygame.locals import *
 
-# global constants
-# initial velocity constant
-vel_const = 0.6
-#gravitational constant
-g = 50
-
-#Projectile Class
-
+# gravitational constant
+g = 500
+# set resolution
 screen_width = 1920
 screen_height= 1080
+
+#Projectile Class
 class Projectile(pygame.sprite.Sprite):
     # Initializes projectile at some point on screen with zero velocity
-    def __init__(self):
-        self.origin = (20, 100)
+    def __init__(self, origin):
+        self.origin = origin
         super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("images/crosshair.png"), (50,50))
+        self.image = pygame.image.load("images/probe.png")
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = self.origin
+        # initial velocity constant
+        self.vel_const = 0.5
 
         self.xvel = 0
         self.yvel = 0
@@ -33,16 +32,16 @@ class Projectile(pygame.sprite.Sprite):
     # updates position based on velocity, resets if offscreen    
     def update(self, dt):
         self.rect.center = (self.rect.center[0] + self.xvel * dt, self.rect.center[1] + self.yvel * dt)
-        if self.rect.center[0] > screen_width or self.rect.center[0] < 0 or self.rect.center[1] > screen_height or self.rect.center[1] < 0:
-            self.__init__()
-        # add "if hits body"
+        if self.rect.center[0] > screen_width + 200 or self.rect.center[0] < -200 or self.rect.center[1] > screen_height + 200 or self.rect.center[1] < -200:
+            self.__init__(self.origin)
     # Fire sets initial velocity toward crosshair        
     def fire(self):
         #velocity constant
         self.fired = True
         mouse_mag = math.sqrt(pygame.mouse.get_pos()[0]**2 + pygame.mouse.get_pos()[1]**2)
-        self.xvel = vel_const  * (pygame.mouse.get_pos()[0] - self.origin[0]) / mouse_mag
-        self.yvel = vel_const * (pygame.mouse.get_pos()[1] - self.origin[1]) / mouse_mag
+        self.xvel = self.vel_const  * (pygame.mouse.get_pos()[0] - self.origin[0]) / mouse_mag
+        self.yvel = self.vel_const * (pygame.mouse.get_pos()[1] - self.origin[1]) / mouse_mag
+        self.t0 = time.time()
     
 # Crosshair class - simple crosshair that replaces cursor
 class Crosshair(pygame.sprite.Sprite):
@@ -84,12 +83,12 @@ crosshair = Crosshair()
 crosshair_group = pygame.sprite.Group()
 crosshair_group.add(crosshair)
 
-projectile = Projectile()
+projectile = Projectile((200, 500))
 projectile_group = pygame.sprite.Group()
 projectile_group.add(projectile)
 
-planet = Body("images/planet_terra.png", 0.75, 300, 500)
-planet2 = Body("images/planet_jungle.png", 1, 1500, 500)
+planet = Body("images/planet_terra.png", 0.5, 1000, 500)
+planet2 = Body("images/planet_jungle.png", 0.65, 1200, 600)
 body_group = pygame.sprite.Group()
 body_group.add(planet)
 body_group.add(planet2)
@@ -103,7 +102,13 @@ def main():
 
     #Initialize Display
     DISPLAY=pygame.display.set_mode((screen_width, screen_height))
- 
+    pygame.display.set_caption("Gravity Game")
+    font_obj=pygame.font.Font("C:\Windows\Fonts\Arial.ttf",25) 
+
+    #initialize timer vars
+    t1 = 0
+    t0 = 0
+
     # Main Loop
     while True:
         # check for events
@@ -114,6 +119,7 @@ def main():
                 sys.exit()
             if event.type == MOUSEBUTTONDOWN:
                 if projectile.fired == False:
+                    t0 = time.time()
                     projectile.fire()
 
         dt = clock.tick(60)
@@ -125,9 +131,22 @@ def main():
         crosshair_group.update()
         projectile_group.draw(DISPLAY)
         projectile_group.update(dt)
-        pygame.display.update()
+
+        #timer for score updates
+        if projectile.fired == True:
+            t1 = time.time()
+        score = t1 - t0
+
+        # Display score
+        text_obj=font_obj.render(f"Flight Time: {round(score, 3)}",True,"white")
+        DISPLAY.blit(text_obj,(22,0))
+        
+
         # check collision
         if pygame.sprite.spritecollide(projectile, body_group, False, pygame.sprite.collide_mask):
-            projectile.__init__()
+            projectile.__init__(projectile.origin)
+        
+        # Update Display
+        pygame.display.update()
         
 main()
