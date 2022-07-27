@@ -24,7 +24,7 @@ class Projectile(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = self.origin
         # initial velocity constant
-        self.vel_const = 0.5
+        self.vel_const = 1
 
         self.xvel = 0
         self.yvel = 0
@@ -32,14 +32,14 @@ class Projectile(pygame.sprite.Sprite):
     # updates position based on velocity, resets if offscreen    
     def update(self, dt):
         self.rect.center = (self.rect.center[0] + self.xvel * dt, self.rect.center[1] + self.yvel * dt)
-        if self.rect.center[0] > screen_width + 200 or self.rect.center[0] < -200 or self.rect.center[1] > screen_height + 200 or self.rect.center[1] < -200:
+        if self.rect.center[0] > screen_width + 1000 or self.rect.center[0] < -1000 or self.rect.center[1] > screen_height + 1000 or self.rect.center[1] < -1000:
             self.__init__(self.origin)
     # Fire sets initial velocity toward crosshair        
     def fire(self):
         #velocity constant
         self.fired = True
         mouse_mag = math.sqrt(pygame.mouse.get_pos()[0]**2 + pygame.mouse.get_pos()[1]**2)
-        self.xvel = self.vel_const  * (pygame.mouse.get_pos()[0] - self.origin[0]) / mouse_mag
+        self.xvel = self.vel_const * (pygame.mouse.get_pos()[0] - self.origin[0]) / mouse_mag
         self.yvel = self.vel_const * (pygame.mouse.get_pos()[1] - self.origin[1]) / mouse_mag
         self.t0 = time.time()
     
@@ -150,7 +150,7 @@ def main(group, origin=(20,20)):
 
         # Display score and instructions
         score_obj=font_obj.render(f"Flight Time: {round(score, 3)} seconds",True,"white")
-        instructions_obj=font_obj.render(f"Click to fire    -   Press \"R\" to reset    -   Press \"Q\" to quit",True,"white")
+        instructions_obj=font_obj.render(f"Click to fire    -   Press \"R\" to reset    -   Press \"Q\" to quit    -    Mousewheel to change initial velocity",True,"white")
         velocity_obj=font_obj.render(f"Launch Velocity: {round(projectile.vel_const, 2)}",True,"white")
 
         DISPLAY.blit(score_obj,(20, 0))
