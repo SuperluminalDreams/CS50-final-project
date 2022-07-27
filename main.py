@@ -87,7 +87,7 @@ projectile = Projectile((200, 500))
 projectile_group = pygame.sprite.Group()
 projectile_group.add(projectile)
 
-planet = Body("images/planet_terra.png", 0.5, 1000, 500)
+planet = Body("images/planet_terra.png", 0.5, 850, 500)
 planet2 = Body("images/planet_jungle.png", 0.65, 1200, 600)
 body_group = pygame.sprite.Group()
 body_group.add(planet)
@@ -117,10 +117,18 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # fire probe with mouse
             if event.type == MOUSEBUTTONDOWN:
                 if projectile.fired == False:
                     t0 = time.time()
                     projectile.fire()
+            # press 'r' to reset
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    projectile.__init__(projectile.origin)
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
 
         dt = clock.tick(60)
         #Update screen fill and sprite groups
@@ -137,9 +145,12 @@ def main():
             t1 = time.time()
         score = t1 - t0
 
-        # Display score
-        text_obj=font_obj.render(f"Flight Time: {round(score, 3)}",True,"white")
-        DISPLAY.blit(text_obj,(22,0))
+        # Display score and instructions
+        score_obj=font_obj.render(f"Flight Time: {round(score, 3)} seconds",True,"white")
+        instructions_obj=font_obj.render(f"Click to fire    -   Press \"R\" to reset    -   Press \"Q\" to quit",True,"white")
+
+        DISPLAY.blit(score_obj,(20, 0))
+        DISPLAY.blit(instructions_obj, (20, 1000))
         
 
         # check collision
