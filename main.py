@@ -13,6 +13,10 @@ g = 500
 screen_width = 1920
 screen_height= 1080
 
+# range considered in bounds for probe
+width_range = range(-1000, screen_width + 1000)
+height_range = range(-1000, screen_height + 1000)
+
 #Projectile Class
 class Projectile(pygame.sprite.Sprite):
     # Initializes projectile at some point on screen with zero velocity
@@ -29,11 +33,13 @@ class Projectile(pygame.sprite.Sprite):
         self.xvel = 0
         self.yvel = 0
         self.fired = False
-    # updates position based on velocity, resets if offscreen    
+
+    # updates position based on velocity, resets if out of range
     def update(self, dt):
         self.rect.center = (self.rect.center[0] + self.xvel * dt, self.rect.center[1] + self.yvel * dt)
-        if self.rect.center[0] > screen_width + 1000 or self.rect.center[0] < -1000 or self.rect.center[1] > screen_height + 1000 or self.rect.center[1] < -1000:
+        if self.rect.center[0] not in width_range or self.rect.center[1] not in height_range:
             self.__init__(self.origin)
+
     # Fire sets initial velocity toward crosshair        
     def fire(self):
         #velocity constant
@@ -77,10 +83,10 @@ class Body(pygame.sprite.Sprite):
             projectile.xvel += self.ax * dt
             projectile.yvel += self.ay * dt 
             
-#Main function
+#Main function - takes input for probe and 
 def main(group, origin=(20,20)):
 
-    # Initialize Objects
+    # Initialize permanent objects plus the custom body group
     crosshair = Crosshair()
     crosshair_group = pygame.sprite.Group()
     crosshair_group.add(crosshair)
